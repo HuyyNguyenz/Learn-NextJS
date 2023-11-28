@@ -1,95 +1,54 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+'use client'
+
+import Link from 'next/link'
+import { useState } from 'react'
+import Table from './components/Table'
+import useSWR from 'swr'
+import Modal from './components/Modal'
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function Home() {
+  const [isShowModal, setIsShowModal] = useState<boolean>(false)
+  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs`, fetcher, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false
+  })
+  if (!data) return <div>Loading...</div>
+
+  const handleOpenModal = () => {
+    setIsShowModal(true)
+  }
+
+  const handleCloseModal = (value: boolean) => {
+    setIsShowModal(value)
+  }
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <div>
+      {/* <ul>
+        <li className='list-disc'>
+          <Link href='/facebook'>Facebook</Link>
+        </li>
+        <li className='list-disc'>
+          <Link href='/youtube'>Youtube</Link>
+        </li>
+        <li className='list-disc'>
+          <Link href='/tiktok'>Tiktok</Link>
+        </li>
+      </ul> */}
+      <div className='flex items-center justify-between'>
+        <h1 className='font-semibold text-xl'>Table Blogs</h1>
+        <button
+          className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'
+          onClick={handleOpenModal}
+        >
+          Add New
+        </button>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      <Table blogs={data.blogs} />
+      {isShowModal && <Modal show={(value) => handleCloseModal(value)} />}
+    </div>
   )
 }
