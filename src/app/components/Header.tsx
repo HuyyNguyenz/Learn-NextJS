@@ -8,18 +8,8 @@ export default function Header() {
       </Link>
       <ul className='flex items-center justify-start'>
         <li className='px-4'>
-          <Link href='/facebook'>
-            <span>Facebook</span>
-          </Link>
-        </li>
-        <li className='px-4'>
-          <Link href='/youtube'>
-            <span>Youtube</span>
-          </Link>
-        </li>
-        <li className='px-4'>
-          <Link href='/tiktok'>
-            <span>Tiktok</span>
+          <Link href='/blogs'>
+            <span>Blogs</span>
           </Link>
         </li>
       </ul>
